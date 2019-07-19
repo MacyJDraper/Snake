@@ -2,13 +2,14 @@
 # Choose an interpreter that works
 import pygame
 
+GAME_SIZE = 400
 BLOCK_SIZE = 20
 SNAKE_COLOR = (0, 255, 255)
 APPLE_COLOR = (175, 100, 60)
 
 pygame.init()
 clock = pygame.time.Clock()
-game_display = pygame.display.set_mode((600, 600))
+game_display = pygame.display.set_mode((GAME_SIZE, GAME_SIZE))
 pygame.display.set_caption('SNAKE!')
 
 
@@ -26,19 +27,21 @@ class Snake():
         head_xcor = self.body[0][0]
         head_ycor = self.body[0][1]
         if self.direction == "RIGHT":
-            new_xcor = head_xcor + BLOCK_SIZE
-            self.body.insert(0, (new_xcor, head_ycor))
+            head_xcor = head_xcor + BLOCK_SIZE
         elif self.direction == "LEFT":
-            new_xcor = head_xcor - BLOCK_SIZE
-            self.body.insert(0, (new_xcor, head_ycor))
+            head_xcor = head_xcor - BLOCK_SIZE
         elif self.direction == "UP":
-            new_ycor = head_ycor - BLOCK_SIZE
-            self.body.insert(0, (head_xcor, new_ycor))
+            head_ycor = head_ycor - BLOCK_SIZE
         elif self.direction == "DOWN":
-            new_ycor = head_ycor + BLOCK_SIZE
-            self.body.insert(0, (head_xcor, new_ycor))
-
+            head_ycor = head_ycor + BLOCK_SIZE
+            
+        self.body.insert(0, (head_xcor, head_ycor))
         self.body.pop()
+    def has_collided_with_wall(self):
+        head = self.body[0]
+        if head[0] < 0 or head[1] < 0 or head[0] + BLOCK_SIZE > GAME_SIZE or head[1] + BLOCK_SIZE > GAME_SIZE:
+            return True
+        return False
 
 class Apple():
     def __init__(self):
@@ -46,7 +49,6 @@ class Apple():
         self.ycor = 80
     def show(self):
         pygame.draw.rect(game_display, APPLE_COLOR, pygame.Rect(self.xcor,self.ycor, BLOCK_SIZE, BLOCK_SIZE))
-
 
 snake = Snake(145, 200)
 apple = Apple()
@@ -70,13 +72,15 @@ while snake.is_alive:
     game_display.blit(game_display, (0, 0))
 
     snake.move()
+    if snake.has_collided_with_wall():
+        snake.is_alive = False
 
     game_display.fill((10, 45, 130,))
     snake.show()
     apple.show()
 
     pygame.display.flip()
-    clock.tick(12)
+    clock.tick(1)
 
 pygame.display.quit()
 pygame.quit()
