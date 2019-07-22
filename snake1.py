@@ -13,7 +13,7 @@ BACKGROUND_COLOR = (10, 45, 130,)
 pygame.init()
 clock = pygame.time.Clock()
 game_display = pygame.display.set_mode((GAME_SIZE, GAME_SIZE))
-score_font = pygame.font.SysFont('Arial', 26, True)
+score_font = pygame.font.SysFont('Arial', int(GAME_SIZE * 0.065), True)
 pygame.display.set_caption('SNAKE!')
 
 class Game_Object():
@@ -107,6 +107,7 @@ while snake.is_alive:
 
     score_text = score_font.render(str(snake.score),False,(255,255,255))
     game_display.blit(score_text, (0,0))
+    pygame.display.set_caption('SNAKE! Score = ' + str(snake.score))
 
     pygame.display.flip()
     clock.tick(10)
