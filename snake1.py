@@ -13,6 +13,7 @@ BACKGROUND_COLOR = (10, 45, 130,)
 pygame.init()
 clock = pygame.time.Clock()
 game_display = pygame.display.set_mode((GAME_SIZE, GAME_SIZE))
+score_font = pygame.font.SysFont('Arial', 26, True)
 pygame.display.set_caption('SNAKE!')
 
 class Game_Object():
@@ -27,6 +28,7 @@ class Snake():
     # This is the constructor
     def __init__(self, xcor, ycor):
         self.is_alive = True
+        self.score = 0
         self.direction = "RIGHT"
         self.body = [ Game_Object(xcor, ycor, SNAKE_COLOR),
                      Game_Object(xcor - BLOCK_SIZE, ycor, SNAKE_COLOR),
@@ -96,11 +98,15 @@ while snake.is_alive:
         snake.is_alive = False
 
     if snake.has_eaten_apple(apple):
+        snake.score += 1
         apple = Apple()
         
     game_display.fill(BACKGROUND_COLOR)
     snake.show()
     apple.show()
+
+    score_text = score_font.render(str(snake.score),False,(255,255,255))
+    game_display.blit(score_text, (0,0))
 
     pygame.display.flip()
     clock.tick(10)
