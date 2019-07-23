@@ -15,6 +15,7 @@ pygame.init()
 clock = pygame.time.Clock()
 game_display = pygame.display.set_mode((GAME_SIZE, GAME_SIZE))
 score_font = pygame.font.SysFont('Arial', int(GAME_SIZE * 0.065), True)
+title_font = pygame.font.SysFont('Arial', int(GAME_SIZE * 0.3), True)
 pygame.display.set_caption('SNAKE!')
 
 class Game_Object():
@@ -129,12 +130,28 @@ def pause_game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_is_paused = False
-                
         pygame.display.update()
         clock.tick(5)
 
 snake = Snake(BLOCK_SIZE * 5, BLOCK_SIZE * 5)
 apple = Apple(snake.body)
+
+#Title screen
+show_title_screen = True
+while show_title_screen:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            snake.is_alive = False
+            show_title_screen = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                show_title_screen = False
+   
+    title_text = title_font.render('SNAKE',False,(APPLE_COLOR))
+    game_display.blit(title_text, (GAME_SIZE / 2 - title_text.get_width() / 2,GAME_SIZE / 2 - title_text.get_height()/ 2))
+    pygame.display.flip()
+    clock.tick(FRAMES_PER_SECOND)
+
 
 # Main Game Loop
 while snake.is_alive:
@@ -161,11 +178,10 @@ while snake.is_alive:
     pygame.display.set_caption('SNAKE! Score = ' + str(snake.score))
 
     pygame.display.flip()
+    clock.tick(FRAMES_PER_SECOND)
     
     if snake.is_alive == False:
         FRAMES_PER_SECOND = 0.2
     
-    clock.tick(FRAMES_PER_SECOND)
-
-pygame.display.quit() # for Mac
+pygame.display.quit()
 pygame.quit()
