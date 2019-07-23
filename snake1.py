@@ -117,6 +117,21 @@ def handle_events():
                 snake.set_direction_up()
             elif event.key == pygame.K_DOWN:
                 snake.set_direction_down()
+            elif event.key == pygame.K_SPACE:
+                pause_game()
+
+def pause_game():
+    game_is_paused = True
+    while game_is_paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                snake.is_alive = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game_is_paused = False
+                
+        pygame.display.update()
+        clock.tick(5)
 
 snake = Snake(BLOCK_SIZE * 5, BLOCK_SIZE * 5)
 apple = Apple(snake.body)
