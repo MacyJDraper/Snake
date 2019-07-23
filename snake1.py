@@ -5,16 +5,16 @@ import random
 
 # Game settings
 GAME_SIZE = 800
-BLOCK_SIZE = GAME_SIZE / 40
+BLOCK_SIZE = GAME_SIZE / 10
 GAP_SIZE = GAME_SIZE * 0.002
 APPLE_COLOR = (255, 28, 202)
 BACKGROUND_COLOR = (19, 19, 158)
-COLOR1 = (153, 255, 153)
-COLOR2 = (102, 255, 102)
-COLOR3 = (128,255, 149)
-COLOR4 = (166, 255, 77)
-COLOR5 = (230, 255, 242)
-COLOR6 = (128, 255, 191)
+COLOR1 = (106, 255, 77)
+COLOR2 = (77, 255, 136)
+COLOR3 = (77, 255, 225)
+COLOR4 = (77, 225, 255)
+COLOR5 = (77, 195, 255)
+COLOR6 = (77, 136, 255)
 FRAMES_PER_SECOND = 60
 
 pygame.init()
@@ -88,7 +88,7 @@ class Snake():
         elif self.color_counter == 5:
             new_color = COLOR6
 
-        if self.color_counter == 2:
+        if self.color_counter == 5:
             self.color_counter = 0
         else:
            self.color_counter += 1
@@ -191,7 +191,7 @@ while snake.is_alive:
 
     game_display.blit(game_display, (0, 0))
 
-    if frame_counter % 5 == 0:
+    if frame_counter % 2 == 0:
         snake.move()
         if snake.has_collided_with_wall() or snake.has_collided_with_itself():
             snake.is_alive = False
@@ -215,7 +215,7 @@ while snake.is_alive:
     clock.tick(FRAMES_PER_SECOND)
     
     if snake.is_alive == False:
-        FRAMES_PER_SECOND = 0.2
+        FRAMES_PER_SECOND = 0.5
     
 pygame.display.quit()
 pygame.quit()
