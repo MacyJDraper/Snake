@@ -5,7 +5,7 @@ import random
 
 # Game settings
 GAME_SIZE = 800
-BLOCK_SIZE = GAME_SIZE / 10
+BLOCK_SIZE = GAME_SIZE / 40
 GAP_SIZE = GAME_SIZE * 0.002
 APPLE_COLOR = (255, 28, 202)
 BACKGROUND_COLOR = (19, 19, 158)
@@ -15,7 +15,8 @@ COLOR3 = (77, 255, 225)
 COLOR4 = (77, 225, 255)
 COLOR5 = (77, 195, 255)
 COLOR6 = (77, 136, 255)
-FRAMES_PER_SECOND = 60
+FRAMES_PER_SECOND = 10
+SNAKE_SPEED = 7
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -24,6 +25,26 @@ score_font = pygame.font.SysFont('Arial', int(GAME_SIZE * 0.065), True)
 title_font = pygame.font.SysFont('Arial', int(GAME_SIZE * 0.3), True)
 pygame.display.set_caption('SNAKE!')
 
+class Color_Cycler():
+    def __init__ (self, *colors):
+        self.colors = []
+        for color in colors:
+            self.colors.append(color)
+        self.cycle_count = 1
+        self.color_change_frequency = 3
+    def get_next_color(self):
+        if self.cycle_count == self.color_change_frequency:
+            self.cycle_count = 0
+        else:
+            self.cycle_count += 1
+            
+        if self.cycle_count == 0:
+            next_color = self.color.pop()
+            self.colors.insert(0, next_color)
+            return next_color
+        else:
+            return self.color[0]
+   
 class Game_Object():
     def __init__(self, xcor,ycor, color):
         self.xcor = xcor
@@ -62,7 +83,7 @@ class Snake():
     def set_direction_down(self):
         if self.direction != "UP":
             self.direction = "DOWN"
-    def move(self):
+    def move(self, color_cycler):
         head_xcor = self.body[0].xcor
         head_ycor = self.body[0].ycor
         if self.direction == "RIGHT":
@@ -74,31 +95,12 @@ class Snake():
         elif self.direction == "DOWN":
             head_ycor = head_ycor + BLOCK_SIZE
             
-        new_color = COLOR5
-        if self.color_counter == 0:
-            new_color = COLOR1
-        elif self.color_counter == 1:
-            new_color = COLOR2
-        elif self.color_counter == 2:
-            new_color = COLOR3
-        elif self.color_counter == 3:
-            new_color = COLOR4
-        elif self.color_counter == 4:
-            new_color = COLOR5
-        elif self.color_counter == 5:
-            new_color = COLOR6
-
-        if self.color_counter == 5:
-            self.color_counter = 0
-        else:
-           self.color_counter += 1
-       
-        self.body.insert(0,Game_Object(head_xcor, head_ycor, new_color))
+        self.body.insert(0, Game_Object(head_xcor, head_ycor, color_cycler.get_next_color()))
         self.previous_last_tail = self.body.pop()
-    def cycle_colors(self):
+    def cycle_colors(self, color_cycler):
         for i in range(len(self.body)-1, 0, -1):
             self.body[i].color = self.body[i-1].color
-
+        self.body[0].color = color_cycler.get_next_color()
     def has_collided_with_wall(self):
         head = self.body[0]
         if head.xcor < 0 or head.ycor < 0 or head.xcor + BLOCK_SIZE > GAME_SIZE or head.ycor + BLOCK_SIZE > GAME_SIZE:
@@ -163,6 +165,7 @@ def pause_game():
         pygame.display.update()
         clock.tick(5)
 
+color_cycler = Color_Cycler(COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6)
 snake = Snake(BLOCK_SIZE * 5, BLOCK_SIZE * 5)
 apple = Apple(snake.body)
 
@@ -191,8 +194,8 @@ while snake.is_alive:
 
     game_display.blit(game_display, (0, 0))
 
-    if frame_counter % 2 == 0:
-        snake.move()
+    if frame_counter % max(1, FRAMES_PER_SECOND // SNAKE_SPEED) == 0:
+        snake.move(color_cycler)
         if snake.has_collided_with_wall() or snake.has_collided_with_itself():
             snake.is_alive = False
 
@@ -200,12 +203,13 @@ while snake.is_alive:
             snake.score += 1
             snake.grow()
             apple = Apple(snake.body)
+            SNAKE_SPEED += 0.2
             
     game_display.fill(BACKGROUND_COLOR)
     snake.show()
     apple.show()
     frame_counter += 1
-    snake.cycle_colors()
+    snake.cycle_colors(color_cycler)
 
     score_text = score_font.render(str(snake.score),False,(255,255,255))
     game_display.blit(score_text, (0,0))
