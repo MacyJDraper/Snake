@@ -22,7 +22,9 @@ class Game_Object():
         self.xcor = xcor
         self.ycor = ycor
         self.color = color
-    def show(self):
+    def show_as_circle(self):
+       pygame.draw.circle(game_display, self.color, (int(self.xcor + BLOCK_SIZE/ 2,), int(self.ycor + BLOCK_SIZE/2)), int(BLOCK_SIZE / 2))
+    def show_as_square(self):  
         pygame.draw.rect(game_display, self.color, pygame.Rect(self.xcor, self.ycor, BLOCK_SIZE, BLOCK_SIZE))
 
 class Snake():
@@ -39,7 +41,7 @@ class Snake():
         self.body.append(self.previous_last_tail)
     def show(self):
         for body_part in self.body:
-            body_part.show()
+            body_part.show_as_square()
     def set_direction_right(self):
         if self.direction != "LEFT":
             self.direction = "RIGHT"
@@ -100,7 +102,7 @@ class Apple():
                 return True
         return False 
     def show(self):
-        self.body.show()
+        self.body.show_as_circle()
 
 def handle_events():
     for event in pygame.event.get():
