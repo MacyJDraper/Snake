@@ -6,6 +6,7 @@ import random
 # Game settings
 GAME_SIZE = 800
 BLOCK_SIZE = GAME_SIZE / 40
+GAP_SIZE = GAME_SIZE * 0.002
 SNAKE_COLOR = (156, 255, 8)
 APPLE_COLOR = (255, 28, 202)
 BACKGROUND_COLOR = (19, 19, 158)
@@ -26,7 +27,7 @@ class Game_Object():
     def show_as_circle(self):
        pygame.draw.circle(game_display, self.color, (int(self.xcor + BLOCK_SIZE/ 2,), int(self.ycor + BLOCK_SIZE/2)), int(BLOCK_SIZE / 2))
     def show_as_square(self):  
-        pygame.draw.rect(game_display, self.color, pygame.Rect(self.xcor, self.ycor, BLOCK_SIZE, BLOCK_SIZE))
+        pygame.draw.rect(game_display, self.color, pygame.Rect(self.xcor + GAP_SIZE, self.ycor + GAP_SIZE, BLOCK_SIZE - GAP_SIZE * 2, BLOCK_SIZE - GAP_SIZE * 2))
 
 class Snake():
     # This is the constructor
@@ -151,7 +152,6 @@ while show_title_screen:
     game_display.blit(title_text, (GAME_SIZE / 2 - title_text.get_width() / 2,GAME_SIZE / 2 - title_text.get_height()/ 2))
     pygame.display.flip()
     clock.tick(FRAMES_PER_SECOND)
-
 
 # Main Game Loop
 while snake.is_alive:
